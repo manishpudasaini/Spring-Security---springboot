@@ -1,6 +1,7 @@
 package com.springSecurity.SpringSecurity.service;
 
-import com.springSecurity.SpringSecurity.model.User;
+import com.springSecurity.SpringSecurity.entity.User;
+
 
 import java.util.List;
 

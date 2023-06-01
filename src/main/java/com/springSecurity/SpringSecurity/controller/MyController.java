@@ -1,24 +1,25 @@
 package com.springSecurity.SpringSecurity.controller;
 
-import com.springSecurity.SpringSecurity.model.User;
+import com.springSecurity.SpringSecurity.entity.User;
 import com.springSecurity.SpringSecurity.service.UserService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
-public class UserController {
+@RequestMapping("/api/v1")
+public class MyController {
     private final UserService userService;
 
-    public UserController(UserService userService) {
+    public MyController(UserService userService) {
         this.userService = userService;
+
     }
 
-    @PostMapping("/add")
-    public User addUser(@RequestBody User user){
-        User user1=userService.addUserI(user);
-        return user1;
+    @PostMapping("/register")
+    public String addUser(@RequestBody User user){
+       userService.addUserI(user);
+        return "Successfully added";
     }
 
     @GetMapping("/get")
@@ -26,4 +27,6 @@ public class UserController {
        List<User> userList= userService.getUsers();
        return userList;
     }
+
+
 }

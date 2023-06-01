@@ -10,9 +10,6 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
     hibernate:
       ddl-auto: update
-      show-sql: 'true'
+      show-sql: true
 
-  security:
-    user:
-      name: manish
-      password: manish
+

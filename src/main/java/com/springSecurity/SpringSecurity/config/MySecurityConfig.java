@@ -2,6 +2,7 @@ package com.springSecurity.SpringSecurity.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
@@ -12,12 +13,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class MySecurityConfig  {
 
     //to encrypt password
+    @Bean
     public  PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
@@ -25,29 +30,32 @@ public class MySecurityConfig  {
     //this bean is used to configure user details
     @Bean
     public UserDetailsService userDetailsService(){
-        UserDetails userDetails = User
+        UserDetails user = User
                 .withUsername("user")
                 .password(passwordEncoder().encode("password"))
-                .roles("NORMAL")
+                .roles("USER")
                 .build();
 
-        UserDetails adminDetails = User
+        UserDetails admin = User
                 .withUsername("admin")
                 .password(passwordEncoder().encode("password"))
                 .roles("ADMIN")
                 .build();
 
         //it is used to support inmemory
-        return new InMemoryUserDetailsManager(userDetails,adminDetails);
+        return new InMemoryUserDetailsManager(user,admin);
 
     }
+
+
 
     //this bean is used to configure security
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/user/get")
+                .requestMatchers(permitAllRequestMatcher())
                 .permitAll()
                 .anyRequest()
                 .authenticated()
@@ -56,6 +64,12 @@ public class MySecurityConfig  {
 
         return http.build();
     }
+
+    @Bean
+    public RequestMatcher permitAllRequestMatcher() {
+        return new AntPathRequestMatcher("/api/v1/**"); // Match all requests
+    }
+
 
 
 
