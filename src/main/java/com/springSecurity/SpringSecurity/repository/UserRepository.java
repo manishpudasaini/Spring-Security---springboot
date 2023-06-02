@@ -1,7 +1,10 @@
 package com.springSecurity.SpringSecurity.repository;
 
-import com.springSecurity.SpringSecurity.entity.User;
+import com.springSecurity.SpringSecurity.entity.UserInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User,Long> {
+import java.util.Optional;
+
+public interface UserRepository extends JpaRepository<UserInfo,Long> {
+    Optional<UserInfo> findByName(String username);
 }
