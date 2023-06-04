@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1")
 public class MyController {
     private final UserService userService;
     private final JwtService jwtService;
@@ -39,18 +38,23 @@ public class MyController {
 
     //this controller is used to create the token and check is user having same username password present in database or not
     @PostMapping("/authenticate")
-    public String authenticateUser(AuthRequest authRequest){
-        Authentication authenticate =
+    public String authenticateUser(@RequestBody AuthRequest authRequest){
+        Authentication authentication =
                 authenticationManager
                         .authenticate(new UsernamePasswordAuthenticationToken(authRequest.getName(), authRequest.getPassword()));
 
-        if(authenticate.isAuthenticated()){
+        if(authentication.isAuthenticated()){
             return jwtService.generateToken(authRequest.getName());
         }else {
             throw new UsernameNotFoundException("User not found");
         }
 
     }
+
+//    @PostMapping("/authenticate")
+//    public String authenticateUser(@RequestBody AuthRequest authRequest){
+//        return jwtService.generateToken(authRequest.getName());
+//    }
 
 
 }

@@ -26,6 +26,19 @@ public class JwtService {
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
+
+    //this method is used to check if the token is expired or not
+    private boolean isTokenExpired(String token) {
+        return extractExpiration(token).before(new Date());
+    }
+
+
+    //this method is used to extract expiration date of token
+    private Date extractExpiration(String token) {
+        return extractClaim(token, Claims::getExpiration);
+
+    }
+
     public <T> T extractClaim(String token, Function<Claims,T> claimsResolver){
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
@@ -46,17 +59,7 @@ public class JwtService {
         return (userName.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
-    //this method is used to check if the token is expired or not
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
 
-
-    //this method is used to extract expiration date of token
-    private Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
-
-    }
     public String generateToken(String username){
         Map<String,Object> claims = new HashMap<>();
         return createToken(claims,username);
@@ -64,10 +67,10 @@ public class JwtService {
 
     private String createToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
-                .setSubject(username)
                 .setClaims(claims)
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000*60*30))
+                .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(getSignedKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

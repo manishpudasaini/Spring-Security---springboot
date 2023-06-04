@@ -64,11 +64,12 @@ public class MySecurityConfig  {
     //this bean is used to configure security
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        return http.csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(permitAllRequestMatcher())
+                .requestMatchers("/authenticate","/register","/get")
                 .permitAll()
+                .and()
+                .authorizeHttpRequests()
                 .anyRequest()
                 .authenticated()
                 .and()
@@ -76,15 +77,13 @@ public class MySecurityConfig  {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authenticationProvider(authenticationProvider())
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class).build();
     }
 
-    @Bean
-    public RequestMatcher permitAllRequestMatcher() {
-        return new AntPathRequestMatcher("/api/v1/**"); // Match all requests
-    }
+//    @Bean
+//    public RequestMatcher permitAllRequestMatcher() {
+//        return new AntPathRequestMatcher("/api/v1/***"); // Match all requests
+//    }
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
